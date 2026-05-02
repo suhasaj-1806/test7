@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kavach | Medical Bill Protector</title>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Scripts -->
+    <script src="https://tailwindcss.com"></script>
+    <script src="https://jsdelivr.net"></script>
+    <script src="https://cloudflare.com"></script>
+    <script src="https://cloudflare.com"></script>
+    <script src="https://jsdelivr.net"></script>
+    <link href="https://cloudflare.com" rel="stylesheet">
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="fixed inset-0 z-50 gradient-bg flex items-center justify-center p-4 transition-opacity duration-500">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-10 space-y-8">
+            <div class="text-center">
+                <div class="bg-brand-50 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-shield-halved text-4xl text-brand-600"></i>
+                </div>
+                <h2 class="text-4xl font-black text-slate-900 tracking-tight italic">KAVACH</h2>
+                <p class="text-slate-500 font-medium mt-2">Hospital Bill Protection Engine</p>
+            </div>
+            <form id="authForm" class="space-y-5">
+                <input type="email" id="loginEmail" required placeholder="User Email" class="w-full px-6 py-4 rounded-2xl border border-slate-200 outline-none focus:ring-4 focus:ring-brand-100 transition">
+                <input type="password" id="loginPass" required placeholder="Password" class="w-full px-6 py-4 rounded-2xl border border-slate-200 outline-none focus:ring-4 focus:ring-brand-100 transition">
+                <button type="submit" class="w-full gradient-bg text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:brightness-110 active:scale-95 transition">Secure Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="mainDashboard" class="hidden-section pb-20">
+        <nav class="sticky top-0 z-40 glass border-b border-brand-100 p-5">
+            <div class="max-w-6xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-shield-halved text-2xl text-brand-600"></i>
+                    <span class="font-black text-2xl tracking-tighter">KAVACH</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <select id="appLang" class="bg-brand-50 text-brand-700 text-sm font-bold rounded-xl px-4 py-2 border-none outline-none">
+                        <option value="eng">English</option><option value="hin">Hindi</option><option value="mar">Marathi</option>
+                    </select>
+                    <button onclick="location.reload()" class="bg-rose-50 text-rose-600 w-10 h-10 rounded-xl flex items-center justify-center hover:bg-rose-100 transition"><i class="fas fa-power-off"></i></button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-6xl mx-auto px-6 pt-10 space-y-10">
+            <!-- Recent History -->
+            <section class="space-y-4">
+                <h3 class="font-black text-xs uppercase tracking-widest text-slate-400 flex items-center gap-2 px-1">Recent Activity</h3>
+                <div id="historyList" class="flex gap-4 overflow-x-auto pb-4 scroll-smooth">
+                    <p class="text-slate-300 italic text-sm">No recent scans.</p>
+                </div>
+            </section>
+
+            <!-- Scanner Section -->
+            <section class="bg-white rounded-[3rem] card-shadow p-10 md:p-16 text-center space-y-8 border-2 border-brand-50">
+                <div class="max-w-xl mx-auto space-y-6">
+                    <h2 class="text-4xl font-black text-slate-900">Upload & Audit</h2>
+                    <p class="text-slate-500 font-medium text-sm">Upload hospital bills for a smart regulatory check.</p>
+                    <div class="relative group">
+                        <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf" class="hidden">
+                        <label for="fileInput" class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-brand-100 rounded-3xl cursor-pointer hover:bg-brand-50 transition bg-slate-50">
+                            <i class="fas fa-file-invoice text-3xl text-brand-400 mb-2"></i>
+                            <span id="fileNameDisplay" class="text-slate-500 font-bold text-sm">Click to select file (JPG, PDF)</span>
+                        </label>
+                    </div>
+                    <button onclick="processBill()" class="w-full gradient-bg text-white py-5 rounded-3xl font-black text-xl shadow-2xl hover:brightness-110 active:scale-95 transition">START AI SCAN</button>
+                    <div id="statusContainer" class="hidden">
+                        <div class="w-full bg-slate-100 rounded-full h-2 mt-6 overflow-hidden">
+                            <div id="progress-bar" class="bg-brand-500 h-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results -->
+            <div id="outputArea" class="hidden-section grid lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white p-8 rounded-[2.5rem] card-shadow space-y-6">
+                    <h3 class="text-xl font-black text-slate-800">Audit Itemization</h3>
+                    <div id="auditResults" class="space-y-3 max-h-[400px] overflow-y-auto pr-2"></div>
+                </div>
+                <div class="bg-slate-900 text-white p-8 rounded-[2.5rem] card-shadow flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-xl font-black mb-4 text-brand-400">Analysis</h3>
+                        <div id="reportSummary" class="text-slate-300 text-sm leading-relaxed"></div>
+                    </div>
+                    <div class="space-y-3 mt-8">
+                        <button onclick="downloadAuditPDF()" class="w-full bg-white text-slate-900 py-4 rounded-2xl font-black text-sm transition">Download PDF Report</button>
+                        <button onclick="shareOnWhatsApp()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition">
+                            <i class="fab fa-whatsapp"></i> Share on WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Area -->
+            <div id="actionArea" class="hidden-section grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-[2.5rem] card-shadow border-2 border-brand-50 space-y-6">
+                    <h3 class="text-xl font-black text-brand-800">Dispute Generator</h3>
+                    <div id="letterBody" class="bg-slate-50 p-6 rounded-3xl text-xs font-mono h-48 overflow-y-auto border border-brand-50"></div>
+                    <canvas id="signature-pad" class="w-full h-24 rounded-2xl"></canvas>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="sendViaMailto()" class="bg-brand-600 text-white py-4 rounded-2xl font-black text-sm">Send Email</button>
+                        <button onclick="downloadLetterPDF()" class="bg-brand-50 text-brand-700 py-4 rounded-2xl font-black text-sm">Download PDF</button>
+                    </div>
+                </div>
+                <div class="bg-brand-900 text-white p-8 rounded-[2.5rem] space-y-6">
+                    <h3 class="text-xl font-black text-brand-400">Local Support</h3>
+                    <button onclick="findLocalHelp()" class="w-full bg-brand-500 py-4 rounded-2xl font-black text-sm">Identify Grievance Cell</button>
+                    <div id="locationResult" class="hidden p-4 bg-brand-800 rounded-2xl border border-brand-700 text-[11px]"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <canvas id="pdf-canvas" class="hidden"></canvas>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Use the same JS logic from the previous turn here...
+        // [Include all the script content here]
+    </script>
+</body>
+</html>
